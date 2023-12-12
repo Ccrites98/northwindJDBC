@@ -6,12 +6,12 @@ public class Main {
         Scanner keyboard = new Scanner(System.in);
         String url = "jdbc:mysql://127.0.0.1:3306/northwind";
         String user = "root";
-        String password = "-wouldntyouliketoknowweatherboy-";
-        String query = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM Products";
+        String password = "wouldntyouliketoknowweatherboy";
         while (true) {
             System.out.println("What do you want to do?");
             System.out.println("1) Display all products");
             System.out.println("2) Display all customers");
+            System.out.println("3) Display all categories and products in a category");
             System.out.println("0) Exit");
             System.out.print("Select an option: ");
             int choice = keyboard.nextInt();
@@ -23,12 +23,52 @@ public class Main {
                 case 2:
                     displayAllCustomers(url, user, password);
                     break;
+                case 3:
+                    displayAllCategoriesAndProducts(url, user, password, keyboard);
+                    break;
                 case 0:
                     System.out.println("Exiting the program. Goodbye!");
                     System.exit(0);
                 default:
                     System.out.println("Invalid option. Please choose a valid option.");
             }
+        }
+    }
+    private static void displayAllCategoriesAndProducts(String url, String user, String password, Scanner keyboard) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            String categoryQuery = "SELECT CategoryID, CategoryName FROM Categories ORDER BY CategoryID";
+            try (Statement categoryStatement = connection.createStatement();
+                 ResultSet categoryResultSet = categoryStatement.executeQuery(categoryQuery)) {
+                while (categoryResultSet.next()) {
+                    int categoryId = categoryResultSet.getInt("CategoryID");
+                    String categoryName = categoryResultSet.getString("CategoryName");
+
+                    System.out.println("Category ID: " + categoryId + ", Category Name: " + categoryName);
+                }
+            }
+            System.out.print("Enter a Category ID to display products: ");
+            int selectedCategoryId = keyboard.nextInt();
+            keyboard.nextLine();
+            String productQuery = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM Products WHERE CategoryID = ?";
+            try (PreparedStatement productStatement = connection.prepareStatement(productQuery)) {
+                productStatement.setInt(1, selectedCategoryId);
+                try (ResultSet productResultSet = productStatement.executeQuery()) {
+                    while (productResultSet.next()) {
+                        int productId = productResultSet.getInt("ProductID");
+                        String productName = productResultSet.getString("ProductName");
+                        double unitPrice = productResultSet.getDouble("UnitPrice");
+                        int unitsInStock = productResultSet.getInt("UnitsInStock");
+
+                        System.out.println("Product ID: " + productId);
+                        System.out.println("Product Name: " + productName);
+                        System.out.println("Unit Price: " + unitPrice);
+                        System.out.println("Units In Stock: " + unitsInStock);
+                        System.out.println("------------------");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     private static void displayAllProducts(String url, String user, String password) {
