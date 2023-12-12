@@ -6,7 +6,7 @@ public class Main {
         Scanner keyboard = new Scanner(System.in);
         String url = "jdbc:mysql://127.0.0.1:3306/northwind";
         String user = "root";
-        String password = "password1";
+        String password = "-wouldntyouliketoknowweatherboy-";
         String query = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM Products";
         while (true) {
             System.out.println("What do you want to do?");
