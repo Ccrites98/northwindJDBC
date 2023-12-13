@@ -41,7 +41,7 @@ public class Main {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/northwind");
         dataSource.setUsername("root");
-        dataSource.setPassword("password1");
+        dataSource.setPassword("-wouldntyouliketoknow-");
         dataSource.setMinIdle(5);
         dataSource.setMaxIdle(10);
         dataSource.setMaxOpenPreparedStatements(100);
